@@ -1,0 +1,67 @@
+<div class="home-container">
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="main-logo">CarbonCalc</h1> <!-- ✅ Big title added -->
+      <h2>Carbon Footprint Calculator</h2>
+      <p>Take charge of your impact on the planet</p>
+      <div class="hero-buttons">
+        <a href="/login" class="btn">Login</a>
+        <a href="/signup" class="btn btn-secondary">Sign Up</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<style>
+  .hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+    text-align: center;
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
+    color: white;
+    padding: 20px;
+  }
+
+  .main-logo {
+    font-size: 4rem; /* ✅ Big letters */
+    font-weight: 900;
+    margin-bottom: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .hero h2 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+  }
+
+  .hero-buttons .btn {
+    margin: 0 10px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+    background: white;
+    color: #2e7d32;
+  }
+
+  .hero-buttons .btn-secondary {
+    background: #388e3c;
+    color: white;
+  }
+
+  .hero-buttons .btn:hover {
+    transform: scale(1.05);
+  }
+</style>

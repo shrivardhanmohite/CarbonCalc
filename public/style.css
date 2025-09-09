@@ -1,0 +1,513 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    /* Use a gradient background for a more appealing look */
+    background: linear-gradient(135deg, #e0ffe0 0%, #e0f7fa 100%); /* Light green to light blue */
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto; /* Defines three rows: nav, main content, footer */
+}
+
+.container {
+    max-width: 1000px;
+    width: 100%;
+    margin: auto;
+    padding: 25px;
+    border-radius: 15px;
+    background: #ffffff;
+    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1),
+                -10px -10px 20px rgba(255, 255, 255, 0.7);
+    /* Removed: padding-right: -10px; - negative padding is generally not advised */
+}
+
+h2 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Use Grid for Landscape Layout */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 30px;
+}
+
+label {
+    font-weight: 500;
+    margin-bottom: 5px;
+    display: block;
+    text-align: left;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+input:focus {
+    border-color: #28a745;
+    outline: none;
+    box-shadow: 0px 0px 8px rgba(40, 167, 69, 0.5);
+}
+
+/* Buttons at bottom spanning both columns */
+.buttons {
+    grid-column: span 2;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:nth-of-type(1) {
+    background-color: #28a745;
+    color: white;
+}
+
+button:nth-of-type(1):hover {
+    background-color: #218838;
+}
+
+button:nth-of-type(2) {
+    background-color: #007bff;
+    color: white;
+}
+
+button:nth-of-type(2):hover {
+    background-color: #0056b3;
+}
+
+#output {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    /* Updated background for a subtle gradient */
+    background: linear-gradient(135deg, #f8fcfc 0%, #eef7f8 100%);
+    color: #2c3e50;
+    font-weight: bold;
+    box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+/* Give main content a name to place it in the grid */
+.main-content-wrapper {
+    grid-row: 2; /* Explicitly place this in the second row */
+    padding: 20px; /* Add padding here for spacing around the main container */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Centered buttons */
+#cal {
+    margin: 10px auto; /* Center horizontally */
+    border-radius: 20px;
+    width: 200px; /* Adjusted width */
+    height: 50px;
+    display: block; /* Ensures margin: auto works */
+}
+#sendBtn {
+    margin: 20px auto; /* Center horizontally */
+    border-radius: 20px;
+    width: 250px; /* Adjusted width */
+    height: 60px;
+    display: block; /* Ensures margin: auto works */
+}
+
+.ans {
+    max-width: 975px;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    /* Removed negative padding */
+}
+.result {
+    margin-top: 20px;
+    margin-left: 10px;
+}
+.result2 {
+    margin-left: 100px;
+    margin-bottom: 20px;
+}
+
+/* Navbar */
+.navbar {
+    background: #2c3e50;
+    color: white;
+    padding: 15px 20px;
+    grid-row: 1; /* Place navbar in the first row of the grid */
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0; /* Reset default list margin */
+    padding: 0; /* Reset default list padding */
+}
+
+.nav-links li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.nav-links li a:hover {
+    color: #28a745;
+}
+
+/* Footer */
+.footer {
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    margin-top: 0; /* Grid handles spacing, no need for margin-top */
+    grid-row: 3; /* Place footer in the third row of the grid */
+}
+
+.footer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 15px;
+}
+
+.footer-links a {
+    color: #f1f1f1;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer-links a:hover {
+    color: #28a745;
+}
+/* Navbar basic styling */
+.nav-container {
+    background-color: #1b6744; /* light gray background for visibility */
+    color: #333;               /* dark text */
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* subtle shadow */
+}
+
+.navbar a {
+    color: #333;               /* dark links */
+    text-decoration: none;
+    margin-right: 1rem;
+    font-weight: 500;
+}
+
+.navbar a:hover {
+    color: #007bff;            /* blue highlight on hover */
+}
+.home-container {
+    font-family: Arial, sans-serif;
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh; /* Full screen */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-image: url('/images/eco-bg.jpg'); /* Replace with your image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    color: white;
+}
+
+/* Overlay to make text readable */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Buttons */
+.hero-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 12px 30px;
+    background-color: #27ae60;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background-color: #1e8449;
+}
+
+.btn-secondary {
+    background-color: #fff;
+    color: #27ae60;
+    border: 2px solid #27ae60;
+}
+
+.btn-secondary:hover {
+    background-color: #27ae60;
+    color: white;
+}
+.auth-container {
+    width: 1000px;
+    height:600px;
+    max-width: 700px;
+    margin: 5rem auto;
+    padding: 2rem;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.auth-container h2 {
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+}
+
+
+.form-group {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 15px;
+    border: 1px solid #ffffff;
+}
+
+.btn {
+    width: 200px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.btn:hover {
+    background-color: #34495e;
+}
+
+.switch {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.switch a {
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.switch a:hover {
+    color: #f39c12;
+}
+#login{
+    height: 500px;
+}
+.about-container {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+/* Hero Section */
+.about-hero {
+  height: 450px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-overlay {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 60px;
+  text-align: center;
+  color: #fff;
+  border-radius: 12px;
+}
+
+.hero-overlay h1 {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.hero-overlay p {
+  font-size: 1.3rem;
+  margin-bottom: 25px;
+}
+
+.btn-primary {
+  display: inline-block;
+  background: #2e7d32;
+  color: #fff;
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  background: #1b5e20;
+  transform: scale(1.05);
+}
+
+/* Cards */
+.about-section {
+  display: flex;
+  justify-content: center;
+  margin: 50px 0;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+.card {
+  background: #f1f8e9;
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+}
+
+.card img {
+  display: block;
+  margin: 0 auto 20px;
+  width: 180px;
+  max-width: 90%;
+  height: auto;
+  border-radius: 12px;
+  transition: transform 0.3s;
+}
+
+.card img:hover {
+  transform: scale(1.05);
+}
+
+.card h2 {
+  color: #2e7d32;
+  margin-bottom: 15px;
+}
+
+.card p, .card li {
+font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.card ul {
+  list-style-type: disc;
+  padding-left: 25px;
+}
+.card img {
+  display: block;
+  margin: 0 auto 25px;  /* centers the image */
+  width: 280px;         /* increase size */
+  max-width: 100%;      /* keeps it responsive */
+  height: auto;         /* keeps aspect ratio */
+  border-radius: 15px;  /* rounded corners */
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* deeper shadow */
+  transition: transform 0.3s ease-in-out;
+}
+
+.card img:hover {
+  transform: scale(1.1);  /* zoom effect on hover */
+}
+

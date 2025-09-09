@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Footprint Calculator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Carbon Footprint Calculator</h2>
+        <label for="family member"> Number of Family Member:</label>
+        <input type="number" id="family_member" placeholder="no of faily member">
+
+        <label for="electricity">Electricity Usage (kWh/month):</label>
+        <input type="number" id="electricity" placeholder="Enter kWh">
+        
+        <label for="petrol">Travel by Petrol (km/month):</label>
+        <input type="number" id="petrol" placeholder="Enter km">
+        
+        <label for="diesel">Travel by Diesel (km/month):</label>
+        <input type="number" id="diesel" placeholder="Enter km">
+        
+        <label for="meat">Meat Consumption (kg/month):</label>
+        <input type="number" id="meat" placeholder="Enter kg">
+        
+        <label for="gas">Gas Consumption (liters/month):</label>
+        <input type="number" id="gas" placeholder="Enter liters">
+        
+        <label for="garbage">Garbage Waste (kg/month):</label>
+        <input type="number" id="garbage" placeholder="Enter kg">
+        
+        <button onclick="calculateFootprint()">Calculate</button>
+        
+        <h3>Your Estimated Carbon Footprint:</h3>
+        <p><strong>Monthly:</strong> <span id="result-monthly">0</span> kg CO₂</p>
+        <p><strong>Daily:</strong> <span id="result-daily">0</span> kg CO₂</p>
+        
+        <button id="sendBtn">Get Reduction Suggestions</button>
+        <div id="output">Suggestions will appear here...</div>
+    </div>
+
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://cdn.jsdelivr.net/npm/@google/generative-ai/+esm";
+
+        const apiKey = "AIzaSyCoKBEr7LjkYr0mmzlM9goskd6Lmv5HP3I"; // Replace with your actual API key
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+        window.calculateFootprint = function () {
+        const family=parseFloat(document.getElementById('family_member').value) || 0;
+        const electricity = parseFloat(document.getElementById('electricity').value) || 0;
+        const petrol = parseFloat(document.getElementById('petrol').value) || 0;
+        const diesel = parseFloat(document.getElementById('diesel').value) || 0;
+        const meat = parseFloat(document.getElementById('meat').value) || 0;
+        const gas = parseFloat(document.getElementById('gas').value) || 0;
+        const garbage = parseFloat(document.getElementById('garbage').value) || 0;
+
+        const totalMonthly = (
+            family*66 +
+            electricity * 0.5 + 
+            petrol * 2.3 + 
+            diesel * 2.7 + 
+            meat * 27 + 
+            gas * 2.3 + 
+            garbage * 0.5
+        ).toFixed(2);
+
+        const totalDaily = (totalMonthly / 30).toFixed(2);
+
+        document.getElementById('result-monthly').innerText = totalMonthly;
+        document.getElementById('result-daily').innerText = totalDaily;
+    };
+
+        document.getElementById("sendBtn").addEventListener("click", async () => {
+            // Retrieve values again to ensure they're up-to-date
+            
+            const electricity = parseFloat(document.getElementById('electricity').value) || 0;
+            const family = parseFloat(document.getElementById('family_member').value) || 0;
+            const petrol = parseFloat(document.getElementById('petrol').value) || 0;
+            const diesel = parseFloat(document.getElementById('diesel').value) || 0;
+            const meat = parseFloat(document.getElementById('meat').value) || 0;
+            const gas = parseFloat(document.getElementById('gas').value) || 0;
+            const garbage = parseFloat(document.getElementById('garbage').value) || 0;
+
+            const totalMonthly = (
+                family *66 +
+                electricity * 0.5 + 
+                petrol * 2.3 + 
+                diesel * 2.7 + 
+                meat * 27 + 
+                gas * 2.3 + 
+                garbage * 0.5
+            ).toFixed(2);
+
+            document.getElementById("output").textContent = "Getting suggestions...";
+
+            try {
+                const prompt = `My carbon footprint details and give these suggestions in generalized form:
+                - Electricity: ${electricity} kWh
+                - Petrol: ${petrol} km
+                - Diesel: ${diesel} km
+                - Meat Consumption: ${meat} kg
+                - Gas: ${gas} liters
+                - Garbage Waste: ${garbage} kg
+                - Estimated Monthly CO₂ Emission: ${totalMonthly} kg
+                
+                Give me personalized suggestions to reduce my carbon footprint.`;
+
+                const result = await model.generateContent(prompt);
+                const response = await result.response.text();
+                
+                document.getElementById("output").innerHTML = formatTextResponse(response);
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById("output").textContent = "Failed to load response.";
+            }
+        });
+
+        function formatTextResponse(responseText) {
+            return responseText
+                .replace(/\*\*(.*?)\*\*/g, "<h2>$1</h2>")
+                .replace(/\*(.*?)\*/g, "<strong>$1</strong>")
+                .replace(/- (.*?)\n/g, "<li>$1</li>")
+                .replace(/\n\n/g, "<br><br>")
+                .replace(/<li>(.*?)<\/li>/g, "<ul><li>$1</li></ul>");
+        }
+    </script>
+</body>
+</html>
