@@ -3,18 +3,16 @@ const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
 const mongoose = require("mongoose");
 const session = require("express-session");
-require("dotenv").config();   // ✅ load environment variables
+require("dotenv").config();
 
 // Initialize app
 const app = express();
 
-// ✅ Connect to MongoDB process.env.MONGO_URL
-mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("✅ MongoDB Connected"))
-.catch((err) => console.error("❌ MongoDB connection error:", err));
+// ✅ Connect to MongoDB
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -23,7 +21,7 @@ app.use(express.json());
 // Sessions
 app.use(
   session({
-    secret: "carboncalcsecret", // use env var in prod
+    secret: "carboncalcsecret", // ⚠️ use env var in production
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 1000 * 60 * 60 }, // 1 hour
@@ -52,12 +50,16 @@ app.use((req, res, next) => {
   next();
 });
 
+// ------------------- AUTH MIDDLEWARE -------------------
+function isLoggedIn(req, res, next) {
+  if (req.session.userId) return next();
+  res.redirect("/login");
+}
+
 // ------------------- ROUTES -------------------
 
 // Redirect root to home
-app.get("/", (req, res) => {
-  res.redirect("/home");
-});
+app.get("/", (req, res) => res.redirect("/home"));
 
 // Home
 app.get("/home", (req, res) => {
@@ -70,8 +72,7 @@ app.get("/about", (req, res) => {
 });
 
 // Calculator
-app.get("/calculator", (req, res) => {
-  if (!req.session.userId) return res.redirect("/login");
+app.get("/calculator", isLoggedIn, (req, res) => {
   res.render("index", { title: "Calculator - Carbon Footprint Calculator" });
 });
 
@@ -91,7 +92,8 @@ app.get("/signup", (req, res) => {
 app.post("/signup", async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
-    if (password !== confirmPassword) return res.send("⚠️ Passwords do not match!");
+    if (password !== confirmPassword)
+      return res.send("⚠️ Passwords do not match!");
 
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.send("⚠️ User already exists. Please login.");
@@ -133,10 +135,8 @@ app.get("/logout", (req, res) => {
 });
 
 // ------------------- CALCULATOR SAVE HISTORY -------------------
-app.post("/calculator", async (req, res) => {
+app.post("/calculator", isLoggedIn, async (req, res) => {
   try {
-    if (!req.session.userId) return res.status(401).json({ error: "Not logged in" });
-
     const { calculation, suggestion } = req.body;
 
     const history = new History({
@@ -146,7 +146,6 @@ app.post("/calculator", async (req, res) => {
     });
 
     await history.save();
-
     res.json({ success: true });
   } catch (error) {
     console.error(error);
@@ -155,25 +154,71 @@ app.post("/calculator", async (req, res) => {
 });
 
 // ------------------- HISTORY -------------------
-app.get("/history", async (req, res) => {
+// ------------------- HISTORY -------------------
+app.get("/history", isLoggedIn, async (req, res) => {
   try {
-    if (!req.session.userId) return res.redirect("/login");
+    const { sort, filter } = req.query;
+    let query = { user: req.session.userId };
 
-    const history = await History.find({ user: req.session.userId }).sort({ date: -1 });
+    const now = new Date();
+
+    // Filter by year
+    if (filter === "year") {
+      query.createdAt = {
+        $gte: new Date(now.getFullYear(), 0, 1),
+        $lte: new Date(now.getFullYear(), 11, 31, 23, 59, 59),
+      };
+    }
+    // Filter by month
+    else if (filter === "month") {
+      query.createdAt = {
+        $gte: new Date(now.getFullYear(), now.getMonth(), 1),
+        $lte: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59),
+      };
+    }
+
+    // Sorting
+    let sortOption = { createdAt: -1 }; // default newest first
+    if (sort === "oldest") sortOption = { createdAt: 1 };
+
+    const history = await History.find(query).sort(sortOption);
+
     res.render("history", { title: "Your History", history });
   } catch (error) {
     console.error(error);
     res.send("❌ Error fetching history");
   }
 });
-app.use((req, res, next) => {
-  res.locals.user = req.user || null; // Passport.js attaches req.user when logged in
-  next();
+
+
+// ------------------- CHATBOT -------------------
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+// Page (only logged in users)
+app.get("/chatbot", isLoggedIn, (req, res) => {
+  res.render("chatbot", { title: "Chatbot - Carbon Footprint Calculator" });
 });
 
+// API (only logged in users)
+app.post("/chatbot", isLoggedIn, async (req, res) => {
+  try {
+    const { question } = req.body;
+    const prompt = `You are an eco-friendly chatbot that helps users understand carbon footprint. Keep answers clear, friendly, and helpful. Question: ${question}`;
+
+    const result = await model.generateContent(prompt);
+    const answer = result.response.text();
+
+    res.json({ answer });
+  } catch (err) {
+    console.error("Chatbot error:", err);
+    res.json({ answer: "⚠️ Sorry, I couldn't fetch an answer right now." });
+  }
+});
 
 // ------------------- START SERVER -------------------
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
 });

@@ -1,10 +1,19 @@
-<footer class="footer">
-  <div class="footer-container">
-    <p>&copy; <%= new Date().getFullYear() %> CarbonCalc. All rights reserved.</p>
-    <div class="footer-links">
-      <a href="/">Privacy</a>
-      <a href="/">Terms</a>
-      <a href="/">Sitemap</a>
+<footer class="footer bg-light border-top py-2 mt-4 w-100">
+  <div class="container-fluid d-flex flex-column flex-md-row justify-content-between align-items-center px-4">
+    
+    <!-- Left: Copyright -->
+    <p class="mb-1 text-muted">&copy; <%= new Date().getFullYear() %> CarbonCalc</p>
+    
+    <!-- Center: Links -->
+    <div class="footer-links d-flex">
+      <a href="/" class="me-4 text-dark fw-semibold text-decoration-none">Privacy</a>
+      <a href="/" class="me-4 text-dark fw-semibold text-decoration-none">Terms</a>
+      <a href="/" class="text-dark fw-semibold text-decoration-none">Sitemap</a>
     </div>
+
+    <!-- Right: Chatbot button -->
+    <a href="/chatbot" class="btn btn-success btn-sm px-3 py-1" style="font-size: 0.85rem; border-radius: 6px;">
+      💬 Chat
+    </a>
   </div>
 </footer>

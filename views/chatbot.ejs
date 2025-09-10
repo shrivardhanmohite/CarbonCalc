@@ -1,0 +1,69 @@
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">💬 Carbon Footprint Chatbot</h2>
+
+  <div class="card shadow p-3 mb-5 bg-body rounded">
+    <!-- Chat Box -->
+    <div 
+      id="chat-box" 
+      class="border rounded p-3 mb-3" 
+      style="height: 400px; overflow-y: auto; background: #f9f9f9;"
+    >
+      <p class="text-muted text-center">
+        👋 Hi! I’m your eco-friendly assistant. Ask me anything about reducing your carbon footprint 🌍
+      </p>
+    </div>
+
+    <!-- Chat Input -->
+    <form id="chat-form" class="d-flex">
+      <input
+        type="text"
+        id="user-input"
+        class="form-control me-2"
+        placeholder="Type your question..."
+        autocomplete="off"
+        required
+      />
+      <button class="btn btn-success" type="submit">Send</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const chatForm = document.getElementById("chat-form");
+  const userInput = document.getElementById("user-input");
+  const chatBox = document.getElementById("chat-box");
+
+  chatForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const message = userInput.value.trim();
+    if (!message) return;
+
+    // Show user message
+    appendMessage("🧑 You", message, "text-end text-primary");
+
+    // Clear input
+    userInput.value = "";
+
+    try {
+      const res = await fetch("/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: message }),
+      });
+
+      const data = await res.json();
+      appendMessage("🤖 Bot", data.answer, "text-start text-success");
+    } catch (err) {
+      appendMessage("⚠️ Bot", "Sorry, I couldn't connect to the chatbot.", "text-start text-danger");
+    }
+  });
+
+  function appendMessage(sender, text, classes = "") {
+    const msg = document.createElement("div");
+    msg.className = `mb-2 ${classes}`;
+    msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight; // Auto scroll
+  }
+</script>

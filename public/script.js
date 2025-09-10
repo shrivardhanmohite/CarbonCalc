@@ -8,9 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const calBtn = document.getElementById("cal");
   const sendBtn = document.getElementById("sendBtn");
 
-  let lastCalculation = null; // store the latest calculation
-  let lastSuggestion = null;  // store AI suggestion
-
   // -----------------------
   // Calculate Carbon Footprint
   // -----------------------
@@ -37,46 +34,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("result-monthly").textContent = totalMonthly;
     document.getElementById("result-daily").textContent = totalDaily;
-
-    lastCalculation = `Monthly: ${totalMonthly} kg, Daily: ${totalDaily} kg`;
   }
 
+  // Bind button to function ✅
   calBtn.addEventListener("click", calculateFootprint);
 
   // -----------------------
   // Get AI Suggestions
   // -----------------------
   sendBtn.addEventListener("click", async () => {
-    if (!lastCalculation) {
-      alert("⚠️ Please calculate first before getting suggestions.");
-      return;
-    }
+    const family = parseFloat(document.getElementById("family_member").value) || 0;
+    const electricity = parseFloat(document.getElementById("electricity").value) || 0;
+    const petrol = parseFloat(document.getElementById("petrol").value) || 0;
+    const diesel = parseFloat(document.getElementById("diesel").value) || 0;
+    const meat = parseFloat(document.getElementById("meat").value) || 0;
+    const gas = parseFloat(document.getElementById("gas").value) || 0;
+    const garbage = parseFloat(document.getElementById("garbage").value) || 0;
 
-    const totalMonthly = document.getElementById("result-monthly").textContent;
+    const totalMonthly = (
+      (family * 66) +
+      (electricity * 0.5) +
+      (petrol * 2.3) +
+      (diesel * 2.7) +
+      (meat * 27) +
+      (gas * 2.3) +
+      (garbage * 0.5)
+    ).toFixed(2);
 
     document.getElementById("output").innerHTML = "<em>Getting suggestions...</em>";
 
     try {
       const prompt = `
-      My carbon footprint is ${totalMonthly} kg CO₂ per month.
-      Give me **personalized, practical, actionable** tips in bullet points to reduce it.
+      My carbon footprint details:
+      - Family Members: ${family}
+      - Electricity: ${electricity} kWh
+      - Petrol: ${petrol} km
+      - Diesel: ${diesel} km
+      - Meat: ${meat} kg
+      - Gas: ${gas} liters
+      - Garbage: ${garbage} kg
+      - Estimated Monthly CO₂: ${totalMonthly} kg
+
+      Give me **personalized, practical, actionable** tips in bullet points to reduce my carbon footprint.
       `;
 
       const result = await model.generateContent(prompt);
       const response = await result.response.text();
 
-      lastSuggestion = formatTextResponse(response);
-      document.getElementById("output").innerHTML = lastSuggestion;
-
-      // ✅ Save history to backend
-      await fetch("/calculator", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          calculation: lastCalculation,
-          suggestion: response
-        })
-      });
+      document.getElementById("output").innerHTML = formatTextResponse(response);
     } catch (error) {
       console.error("Error:", error);
       document.getElementById("output").textContent = "❌ Failed to load suggestions.";
@@ -99,3 +104,16 @@ document.addEventListener("DOMContentLoaded", () => {
     return formatted;
   }
 });
+// ✅ Save to backend (history)
+  try {
+    await fetch("/calculator", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        monthly: totalMonthly,
+        daily: totalDaily
+      })
+    });
+  } catch (err) {
+    console.error("Error saving history:", err);
+  }

@@ -1,6 +1,15 @@
 <div class="history-container">
   <h2 class="heading">Your Calculation History</h2>
 
+  <% if (history.length > 0) { %>
+  <div class="d-flex justify-content-center mb-3">
+    <a href="/history?sort=newest" class="btn btn-outline-success btn-sm me-2">Newest First</a>
+    <a href="/history?sort=oldest" class="btn btn-outline-warning btn-sm me-2">Oldest First</a>
+    <a href="/history?filter=year" class="btn btn-outline-primary btn-sm me-2">This Year</a>
+    <a href="/history?filter=month" class="btn btn-outline-secondary btn-sm">This Month</a>
+  </div>
+  <% } %>
+
   <% if (history.length === 0) { %>
     <p class="nh">No history yet. Try a calculation!</p>
   <% } else { %>
