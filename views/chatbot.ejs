@@ -49,11 +49,11 @@
       const res = await fetch("/chatbot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: message }),
+        body: JSON.stringify({ input: message }),
       });
 
       const data = await res.json();
-      appendMessage("🤖 Bot", data.answer, "text-start text-success");
+      appendMessage("🤖 Bot", data.reply, "text-start text-success");
     } catch (err) {
       appendMessage("⚠️ Bot", "Sorry, I couldn't connect to the chatbot.", "text-start text-danger");
     }
