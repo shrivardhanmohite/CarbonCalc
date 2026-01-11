@@ -7,7 +7,7 @@
   },
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "🌱 CarbonCalc – Carbon Footprint Calculator",
   "dependencies": {
     "@google-cloud/translate": "^9.2.0",
     "@google/generative-ai": "^0.24.1",
@@ -18,5 +18,6 @@
     "express-session": "^1.18.2",
     "mongoose": "^8.18.1",
     "path": "^0.12.7"
-  }
+  },
+  "devDependencies": {}
 }
